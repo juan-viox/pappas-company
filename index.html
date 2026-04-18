@@ -1072,6 +1072,45 @@
     padding-bottom: 12px;
   }
 
+  .services-footer {
+    margin-top: 64px;
+    padding-top: 56px;
+    border-top: 1px solid rgba(201,169,97,0.4);
+    display: flex;
+    justify-content: center;
+  }
+  .services-footer-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: var(--navy);
+    padding: 20px 32px;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .services-footer-link:hover { transform: translateY(-2px); }
+  .services-footer-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--concrete);
+    font-weight: 600;
+  }
+  .services-footer-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(32px, 4.2vw, 52px);
+    letter-spacing: -0.8px;
+    line-height: 1.05;
+    color: var(--navy);
+  }
+  .services-footer-title em {
+    font-style: italic;
+    color: var(--coral);
+  }
+
   .services-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2492,9 +2531,15 @@
      ENTRANCE ANIMATIONS
      ============================================================ */
 
-  .reveal {
+  /* Reveal elements: visible by default; JS adds .reveal-init to hide-then-animate. */
+  .reveal-init {
     opacity: 0;
     transform: translateY(28px);
+    transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  }
+  .reveal-init.reveal-on {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .print-only { display: none; }
@@ -2675,7 +2720,7 @@
 
   <nav aria-label="Primary">
     <ul class="nav-links" id="navLinks">
-      <li><a href="#products">Products</a></li>
+      <li><a href="/products.html">Products</a></li>
       <li><a href="#markets">Markets</a></li>
       <li><a href="#work">Work</a></li>
       <li><a href="#about">About</a></li>
@@ -2898,7 +2943,7 @@
           <span class="service-card-brand">Modernfold &middot; Skyfold</span>
           <h3>Operable <em>Partitions</em></h3>
           <p>Horizontal and vertical folding partitions with STC ratings up to 56. Manual, electric, and vertically stacking systems for ballrooms, classrooms, and boardrooms.</p>
-          <a href="#contact" class="service-card-arrow">Spec sheets</a>
+          <a href="/products" class="service-card-arrow">Full spec &amp; models</a>
         </div>
       </article>
 
@@ -2911,7 +2956,7 @@
           <span class="service-card-brand">Modernfold Acousti-Clear</span>
           <h3>Movable <em>Glass Walls</em></h3>
           <p>Frameless glass wall systems for boardrooms, hospitality, and flex office spaces. Transparency without compromise on acoustic isolation.</p>
-          <a href="#contact" class="service-card-arrow">Spec sheets</a>
+          <a href="/products" class="service-card-arrow">Full spec &amp; models</a>
         </div>
       </article>
 
@@ -2924,7 +2969,7 @@
           <span class="service-card-brand">Smoke Guard</span>
           <h3>Smoke &amp; <em>Fire Protection</em></h3>
           <p>Code-compliant smoke containment and fire-barrier systems. Cross-corridor thresholds, elevator lobbies, and stairwells. NFPA 105 and NFPA 80 certified.</p>
-          <a href="#contact" class="service-card-arrow">Spec sheets</a>
+          <a href="/products" class="service-card-arrow">Full spec &amp; models</a>
         </div>
       </article>
 
@@ -2937,7 +2982,7 @@
           <span class="service-card-brand">Renlita</span>
           <h3>Custom <em>Openings</em></h3>
           <p>Custom counter shutters, bi-fold doors, and venting openings for institutional facades. Engineered one-offs for museums, transit, and higher-ed.</p>
-          <a href="#contact" class="service-card-arrow">Spec sheets</a>
+          <a href="/products" class="service-card-arrow">Full spec &amp; models</a>
         </div>
       </article>
 
@@ -2950,7 +2995,7 @@
           <span class="service-card-brand">Draper</span>
           <h3>Athletic <em>Equipment</em></h3>
           <p>Gym partitions, basketball backstops, bleachers, scoreboards, and divider curtains. K-12, higher-ed, and collegiate athletic facilities across New England.</p>
-          <a href="#contact" class="service-card-arrow">Spec sheets</a>
+          <a href="/products" class="service-card-arrow">Full spec &amp; models</a>
         </div>
       </article>
 
@@ -2963,10 +3008,17 @@
           <span class="service-card-brand">Draper</span>
           <h3>Presentation <em>&amp; AV</em></h3>
           <p>Projection screens, AV lifts, motorized shades, and lecterns. Integrated with Modernfold operable partitions for transform-on-demand presentation rooms.</p>
-          <a href="#contact" class="service-card-arrow">Spec sheets</a>
+          <a href="/products" class="service-card-arrow">Full spec &amp; models</a>
         </div>
       </article>
 
+    </div>
+
+    <div class="services-footer">
+      <a href="/products" class="services-footer-link">
+        <span class="services-footer-eyebrow">The full catalog &mdash; 28 products across 5 brands</span>
+        <span class="services-footer-title">Every product we <em>represent</em> &rarr;</span>
+      </a>
     </div>
   </div>
 </section>
@@ -3703,20 +3755,28 @@
     }
   });
 
-  // ─── REVEAL animations ─────────────────────────────────────
-  gsap.utils.toArray('.reveal').forEach(el => {
-    gsap.from(el, {
-      opacity: 0,
-      y: 32,
-      duration: 1.0,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 86%',
-        once: true
-      }
-    });
+  // ─── REVEAL animations (pure class-toggle; CSS transitions handle the animation) ─
+  // Elements stay visible by default. Only below-fold elements get .reveal-init → .reveal-on toggle.
+  document.querySelectorAll('.reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.92) return; // already in/past viewport — leave visible
+    el.classList.add('reveal-init');
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
+          entry.target.classList.add('reveal-on');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
+    io.observe(el);
   });
+  // Safety net: 3s after load, force-reveal any .reveal-init still missing .reveal-on
+  setTimeout(() => {
+    document.querySelectorAll('.reveal-init:not(.reveal-on)').forEach(el => {
+      el.classList.add('reveal-on');
+    });
+  }, 3000);
 
   // Fade-in for major headings
   gsap.utils.toArray('h2, .eyebrow').forEach(el => {
